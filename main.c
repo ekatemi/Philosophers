@@ -27,6 +27,9 @@ with a mutex for each of them.*/
 // argv[5] arr number of time each philo must eat OPTIONAL
 
 
+
+
+
 int main (int argc, char **argv)
 {
     int i;
@@ -39,6 +42,11 @@ int main (int argc, char **argv)
             if (!is_digit(&argv[i][0]))
             {
                 ft_putstr_fd("Wrong input", 2);
+                return (0);
+            }
+            else if (i > 5)
+            {
+                ft_putstr_fd("Should be only 5 arguments: <num philosophers> <die> <eat> <sleep> <meals>", 2);
                 return (0);
             }
             handle_input(&data, argv);

@@ -1,14 +1,20 @@
 #ifndef PHILO_H
-#define PHILO_H
+# define PHILO_H
 
 //HEADERS
 #include <stdio.h>
 #include <unistd.h>
 #include <pthread.h>
 #include <stdlib.h>
+#include <sys/time.h>
+
+#ifndef NUM_MEALS
+# define NUM_MEALS 100
+#endif
 
 //STRUCT
-// argv[2] time to die  (in milliseconds)
+// argv[2] time to die  (in milliseconds) milliseconds since the beginning of their last meal or the beginning of the simulation calculate this 
+//beginning+time to die  or last_meal_end+time_to_die
 // argv[3] time to eat  (in milliseconds)
 // argv[4] time to sleep  (in milliseconds)
 typedef struct s_philo
