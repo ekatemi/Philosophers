@@ -19,7 +19,6 @@ with a mutex for each of them.*/
 
 #include "philo.h"
 
-
 // argv[1] num of philosophers == num of forks is from 1 to num
 // argv[2] time to die  (in milliseconds)
 // argv[3] time to eat  (in milliseconds)
@@ -27,36 +26,14 @@ with a mutex for each of them.*/
 // argv[5] arr number of time each philo must eat OPTIONAL
 
 
-
-
-
 int main (int argc, char **argv)
 {
-    int i;
-    t_philo data;
-    i = 1;
-    if (argc > 4)
-    {
-        while (i < argc)
-        {
-            if (!is_digit(&argv[i][0]))
-            {
-                ft_putstr_fd("Wrong input", 2);
-                return (0);
-            }
-            else if (i > 5)
-            {
-                ft_putstr_fd("Should be only 5 arguments: <num philosophers> <die> <eat> <sleep> <meals>", 2);
-                return (0);
-            }
-            handle_input(&data, argv);
-            i++;
-        }
-    }
-    else 
-    {
-        ft_putstr_fd("Short input", 2);
-    }
-    printf("num philo %d\ntime to die %d\ntime to eat %d\ntime to sleep %d\noptional %d\n", data.num_philo, data.time_to_die, data.time_to_eat, data.time_to_sleep, data.num_time_to_eat);
+    t_philo data;  
+    if (!input_ok(argc, argv))
+        return(1);
+    init_input(&data, argv);
+    size_t time = get_current_time();
+    printf("Current time in milliseconds is %zu\n", time);
+    printf("num philo %d\ntime to die %zu\ntime to eat %zu\ntime to sleep %zu\noptional %d\n", data.num_of_philos, data.time_to_die, data.time_to_eat, data.time_to_sleep, data.num_meals);
     return (0);
 }
