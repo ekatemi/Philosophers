@@ -25,40 +25,33 @@ with a mutex for each of them.*/
 // argv[4] time to sleep  (in milliseconds)
 // argv[5] arr number of time each philo must eat OPTIONAL
 
+void *monitor()
+{
+    printf("Im a monitor");
+    return NULL;
+}
 
 int main (int argc, char **argv)
 {
-    t_philo data;  
+    //idata holds data from input
+    t_philo data;
     if (!input_ok(argc, argv))
         return(1);
     init_input(&data, argv);
-    size_t time = get_current_time();
-    printf("Current time in milliseconds is %zu\n", time);
-    printf("num philo %d\ntime to die %zu\ntime to eat %zu\ntime to sleep %zu\noptional %d\n", data.num_of_philos, data.time_to_die, data.time_to_eat, data.time_to_sleep, data.num_meals);
-    //create threads in a loop
-    pthread_t philosophers[data.num_of_philos];
-    int i = 0;
-    while (i < data.num_of_philos)
+    printf("INPUT: num philo %d\ntime to die %zu\ntime to eat %zu\ntime to sleep %zu\noptional %d\n", data.num_of_philos, data.time_to_die, data.time_to_eat, data.time_to_sleep, data.num_meals);
+    pthread_t		monitor_thread; //create 1 separate thread for monitoring
+    t_program set;
+    start_philosophers(&data, &set);
+    if (pthread_create(&monitor_thread, NULL, &monitor, NULL))
     {
-        if (pthread_create (&philosophers[i], NULL, (void *)routine, NULL))
-        {
-            ft_putstr_fd("Error threads create", 2);
-            return(1);
-        }
-        i++;
+        ft_putstr_fd("Error monitor thread create", 2);
+        exit(EXIT_FAILURE);
     }
-    //wait for finish all threads in a loop
-    i = 0;
-    while (i < data.num_of_philos)
+    join_philosophers(&data, &set);
+    if (pthread_join(monitor_thread, NULL))
     {
-        if (pthread_join(philosophers[i], NULL))
-        {
-            ft_putstr_fd("Error threads join", 2);
-            return(2);
-        }
-        i++;
-    } 
-
-
+        ft_putstr_fd("Error monitor thread join", 2);
+        exit(EXIT_FAILURE);
+    }
     return (0);
 }

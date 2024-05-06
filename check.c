@@ -31,7 +31,7 @@ int input_ok(int argc, char **argv)
         {
             if (!arg_is_digit(argv[i]))
             {
-                ft_putstr_fd("Only numbers allowed\n", 2);
+                ft_putstr_fd("Only numbers allowed", 2);
                 return (0);
             }
             i++;
@@ -39,7 +39,7 @@ int input_ok(int argc, char **argv)
     }
     else
     {
-        ft_putstr_fd("Wrong argument count\n", 2);
+        ft_putstr_fd("Wrong argument count", 2);
         return (0);
     }
     return (1);

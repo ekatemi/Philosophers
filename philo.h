@@ -23,10 +23,11 @@
 //this stricture contains info about each philisopher
 typedef struct s_philo
 {
-    //pthread_t		thread;
+    pthread_t		thread;
 	int				philo_id;
 	int				eating; //1 0
 	int				meals_eaten; //++
+	int				all_ate;
 	size_t			last_meal; //start eating + time to eat
 	size_t			time_to_die;
 	size_t			time_to_eat;
@@ -35,20 +36,21 @@ typedef struct s_philo
 	int				num_of_philos;
 	int				num_meals;
 	int				*dead;
-	// pthread_mutex_t	*r_fork;
-	// pthread_mutex_t	*l_fork;
-	// pthread_mutex_t	*write_lock;
-	// pthread_mutex_t	*dead_lock;
-	// pthread_mutex_t	*meal_lock;
+	pthread_mutex_t	*r_fork;
+	pthread_mutex_t	*l_fork;
+	pthread_mutex_t	*write_lock;
+	pthread_mutex_t	*dead_lock;
+	pthread_mutex_t	*meal_lock;
 }   t_philo;
 
 typedef struct s_program
 {
-	// int				dead_flag;
-	// pthread_mutex_t	dead_lock;
-	// pthread_mutex_t	meal_lock;
-	// pthread_mutex_t	write_lock;
-	t_philo			*philos;
+	int				dead_flag;
+	pthread_mutex_t	dead_lock;
+	pthread_mutex_t	meal_lock;
+	pthread_mutex_t	write_lock;
+	pthread_mutex_t *forks;
+	t_philo			*philos; //array of structs type t_philo with all info
 }					t_program;
 
 
@@ -58,7 +60,9 @@ int input_ok(int argc, char **argv);
 void	init_input(t_philo *philo, char **argv);
 
 //INIT
-void	init_input(t_philo *philo, char **argv);
+void	init_input(t_philo *data, char **argv);
+void	start_philosophers(t_philo *data, t_program *set);
+void	join_philosophers(t_philo *data, t_program *set);
 
 //ROUTINE
 void *routine(void *data);
