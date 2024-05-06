@@ -23,7 +23,7 @@
 //this stricture contains info about each philisopher
 typedef struct s_philo
 {
-    pthread_t		thread;
+    //pthread_t		thread;
 	int				philo_id;
 	int				eating; //1 0
 	int				meals_eaten; //++
@@ -59,6 +59,9 @@ void	init_input(t_philo *philo, char **argv);
 
 //INIT
 void	init_input(t_philo *philo, char **argv);
+
+//ROUTINE
+void *routine(void *data);
 
 //UTILS
 size_t	get_current_time(void);

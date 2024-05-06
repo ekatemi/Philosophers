@@ -35,5 +35,30 @@ int main (int argc, char **argv)
     size_t time = get_current_time();
     printf("Current time in milliseconds is %zu\n", time);
     printf("num philo %d\ntime to die %zu\ntime to eat %zu\ntime to sleep %zu\noptional %d\n", data.num_of_philos, data.time_to_die, data.time_to_eat, data.time_to_sleep, data.num_meals);
+    //create threads in a loop
+    pthread_t philosophers[data.num_of_philos];
+    int i = 0;
+    while (i < data.num_of_philos)
+    {
+        if (pthread_create (&philosophers[i], NULL, (void *)routine, NULL))
+        {
+            ft_putstr_fd("Error threads create", 2);
+            return(1);
+        }
+        i++;
+    }
+    //wait for finish all threads in a loop
+    i = 0;
+    while (i < data.num_of_philos)
+    {
+        if (pthread_join(philosophers[i], NULL))
+        {
+            ft_putstr_fd("Error threads join", 2);
+            return(2);
+        }
+        i++;
+    } 
+
+
     return (0);
 }
