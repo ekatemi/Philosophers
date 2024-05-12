@@ -61,8 +61,10 @@ void	init_input(t_philo *philo, char **argv);
 
 //INIT
 void	init_input(t_philo *data, char **argv);
-void	start_philosophers(t_philo *data, t_program *set);
-void	join_philosophers(t_philo *data, t_program *set);
+void	set_philosophers(t_philo *data, t_program *set);
+void	create_and_join_threads(t_philo *data, t_program *set);
+void init_mutexes(t_program *set);
+void cleanup_all(t_program *set);
 
 //ROUTINE
 void *routine(void *data);

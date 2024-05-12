@@ -41,13 +41,13 @@ int main (int argc, char **argv)
     printf("INPUT: num philo %d\ntime to die %zu\ntime to eat %zu\ntime to sleep %zu\noptional %d\n", data.num_of_philos, data.time_to_die, data.time_to_eat, data.time_to_sleep, data.num_meals);
     pthread_t		monitor_thread; //create 1 separate thread for monitoring
     t_program set;
-    start_philosophers(&data, &set);
+    set_philosophers(&data, &set);
     if (pthread_create(&monitor_thread, NULL, &monitor, NULL))
     {
         ft_putstr_fd("Error monitor thread create", 2);
         exit(EXIT_FAILURE);
     }
-    join_philosophers(&data, &set);
+    create_and_join_threads(&data, &set);
     if (pthread_join(monitor_thread, NULL))
     {
         ft_putstr_fd("Error monitor thread join", 2);
