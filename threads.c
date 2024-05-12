@@ -24,9 +24,12 @@
 // }
 
 
-void *routine()
+void *routine(void *arg)
 {
-    printf("Hello from philo");
+    t_philo *philo;
+
+    philo = (t_philo *)arg;
+    printf("Hello from philo %d\n", philo->philo_id);
     // t_philo *data = (t_philo *)arg;
     // data->start_time = get_current_time();
     // printf("time: %ld philosopher is eating", get_current_time());
