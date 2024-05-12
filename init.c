@@ -86,7 +86,7 @@ void	create_and_join_threads(t_philo *data, t_program *set)
 		if (pthread_create(&set->philos[i].thread, NULL, &routine, &set->philos[i]))
 		{
 			ft_putstr_fd("Error thread create", 2);
-			cleanup_all(&set);
+			cleanup_all(set);
 			exit(EXIT_FAILURE);// not shure
 		}
 		i++;
@@ -97,7 +97,9 @@ void	create_and_join_threads(t_philo *data, t_program *set)
 	{
 		if(pthread_join(set->philos[i].thread, NULL))
 		{
-
+			ft_putstr_fd("Error thread join", 2);
+			cleanup_all(set);
+			exit(EXIT_FAILURE);// not shure	
 		}
 		i++;
 	}
