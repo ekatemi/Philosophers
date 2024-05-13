@@ -35,12 +35,12 @@ typedef struct s_philo
 	size_t			start_time;
 	int				num_of_philos;
 	int				num_meals;
-	int				*dead;
+	int				*ptr_dead_flag;
 	pthread_mutex_t	*r_fork;
 	pthread_mutex_t	*l_fork;
-	pthread_mutex_t	*write_lock;
-	pthread_mutex_t	*dead_lock;
-	pthread_mutex_t	*meal_lock;
+	pthread_mutex_t	*ptr_write_lock;
+	pthread_mutex_t	*ptr_dead_lock;
+	pthread_mutex_t	*ptr_meal_lock;
 }   t_philo;
 
 typedef struct s_program
@@ -63,11 +63,12 @@ void	init_input(t_philo *philo, char **argv);
 void	init_input(t_philo *data, char **argv);
 void	set_philosophers(t_philo *data, t_program *set);
 void	create_and_join_threads(t_philo *data, t_program *set);
-void init_mutexes(t_program *set);
+void init_mutexes(t_program *set, t_philo *data);
 void cleanup_all(t_program *set);
 
 //ROUTINE
 void *routine(void *data);
+void *monitor();
 
 //UTILS
 size_t	get_current_time(void);

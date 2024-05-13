@@ -35,25 +35,35 @@ void	set_philosophers(t_philo *data, t_program *set)
 	}
 }
 
-void init_mutexes(t_program *set)
+void init_mutexes(t_program *set, t_philo *data)
 {
 	int	i;
 
 	i = 0;
-	set->forks = malloc(set->philos->num_of_philos * sizeof(pthread_mutex_t));
-	set->philos = malloc(set->philos->num_of_philos * sizeof(t_philo));
+	set->philos = malloc(data->num_of_philos * sizeof(t_philo));
+	//mallock err
+	set->forks = malloc(data->num_of_philos * sizeof(pthread_mutex_t));
+	//malloc err
 	set->dead_flag = 0;
-	while (i < set->philos->num_of_philos)
+	pthread_mutex_init(&set->write_lock, NULL);
+    pthread_mutex_init(&set->meal_lock, NULL);
+    pthread_mutex_init(&set->dead_lock, NULL);
+	while(i < data->num_of_philos)
 	{
 		pthread_mutex_init(&set->forks[i], NULL);
+		i++;
+	}
+	
+	i = 0;
+	while (i < data->num_of_philos)
+	{
+		//pthread_mutex_init(&set->forks[i], NULL);
 		set->philos[i].l_fork = &set->forks[i];
 		set->philos[i].r_fork = &set->forks[(i + 1) % set->philos->num_of_philos];
-		set->philos[i].dead = &set->dead_flag;
-		set->philos[i].write_lock = &set->write_lock;
-		set->philos[i].meal_lock = &set->meal_lock;
-		set->philos[i].dead_lock = &set->dead_lock;
-		pthread_mutex_init(set->philos[i].meal_lock, NULL);
-		pthread_mutex_init(set->philos[i].dead_lock, NULL);
+		set->philos[i].ptr_dead_flag = &set->dead_flag;
+		set->philos[i].ptr_write_lock = &set->write_lock;
+		set->philos[i].ptr_meal_lock = &set->meal_lock;
+		set->philos[i].ptr_dead_lock = &set->dead_lock;
 		i++;
 	}
 }
@@ -64,7 +74,7 @@ void cleanup_all(t_program *set)
 	int	i;
 
 	i = 0;
-	while (i < set->philos->num_of_philos)
+	while (i < set->philos[0].num_of_philos)
 	{
 		pthread_mutex_destroy(&set->forks[i]);
 		i++;
@@ -81,6 +91,14 @@ void	create_and_join_threads(t_philo *data, t_program *set)
 	int	i;
 
 	i = 0;
+	pthread_t		monitor_thread;
+	if (pthread_create(&monitor_thread, NULL, &monitor, &set))
+		{
+			ft_putstr_fd("Error monitor thread create", 2);
+			cleanup_all(set);
+			exit(EXIT_FAILURE);// not shure
+		}
+
 	while (i < data->num_of_philos)
 	{
 		if (pthread_create(&set->philos[i].thread, NULL, &routine, &set->philos[i]))
@@ -103,4 +121,10 @@ void	create_and_join_threads(t_philo *data, t_program *set)
 		}
 		i++;
 	}
+	if(pthread_join(monitor_thread, NULL))
+		{
+			ft_putstr_fd("Error monitor thread join", 2);
+			cleanup_all(set);
+			exit(EXIT_FAILURE);// not shure	
+		}
 }
