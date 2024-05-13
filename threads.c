@@ -23,7 +23,7 @@
 //     //end mutex
 // }
 
-
+//function executed in each tread
 void *routine(void *arg)
 {
     t_philo *philo;
