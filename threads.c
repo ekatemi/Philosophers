@@ -29,6 +29,6 @@ void *routine(void *arg)
     t_philo *philo;
 
     philo = (t_philo *)arg;
-    printf("Hello from philo %d, my left fork is %d and right forkis %d\n", philo->philo_id, *((int *)philo->l_fork), *((int *)philo->r_fork));
+    printf("Hello from philo %d, my left fork is %p and right forkis %p\n", philo->philo_id, philo->l_fork, philo->r_fork);
     return NULL;
 }
