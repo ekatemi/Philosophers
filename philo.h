@@ -27,7 +27,7 @@ typedef struct s_philo
 	int				philo_id;
 	int				eating; //1 0
 	int				meals_eaten; //++
-	int				all_ate;
+	int				all_ate;//1 or 0
 	size_t			last_meal; //start eating + time to eat
 	size_t			time_to_die;
 	size_t			time_to_eat;
@@ -68,7 +68,7 @@ void cleanup_all(t_program *set);
 
 //ROUTINE
 void *routine(void *data);
-void *monitor();
+void *monitor(void *arg);
 
 //UTILS
 size_t	get_current_time(void);

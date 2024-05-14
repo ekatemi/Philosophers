@@ -31,6 +31,7 @@ void	set_philosophers(t_philo *data, t_program *set)
 		set->philos[i].time_to_eat = data->time_to_eat; //same for everyone
 		set->philos[i].time_to_sleep = data->time_to_sleep; //same for everyone
 		set->philos[i].num_meals = data->num_meals; //same for everyone
+		//set->philos[i].ptr_dead_flag = NULL;
 		i++;
 	}
 }
@@ -95,7 +96,7 @@ void	create_and_join_threads(t_philo *data, t_program *set)
 
 	i = 0;
 	pthread_t		monitor_thread;
-	if (pthread_create(&monitor_thread, NULL, &monitor, &set))
+	if (pthread_create(&monitor_thread, NULL, monitor, set))
 		{
 			ft_putstr_fd("Error monitor thread create", 2);
 			cleanup_all(set);
@@ -104,7 +105,7 @@ void	create_and_join_threads(t_philo *data, t_program *set)
 
 	while (i < data->num_of_philos)
 	{
-		if (pthread_create(&set->philos[i].thread, NULL, &routine, &set->philos[i]))
+		if (pthread_create(&set->philos[i].thread, NULL, routine, &set->philos[i]))///fucking pointer!!!
 		{
 			ft_putstr_fd("Error thread create", 2);
 			cleanup_all(set);

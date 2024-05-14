@@ -25,11 +25,11 @@ with a mutex for each of them.*/
 // argv[4] time to sleep  (in milliseconds)
 // argv[5] arr number of time each philo must eat OPTIONAL
 
-void *monitor()
-{
-    printf("Im a monitor\n");
-    return NULL;
-}
+// void *monitor()
+// {
+//     printf("Im a monitor\n");
+//     return NULL;
+// }
 
 int main (int argc, char **argv)
 {
