@@ -32,14 +32,7 @@ static void eat(t_philo *philo)
     pthread_mutex_lock(philo->r_fork);
     safe_print(philo, " has taken a fork");
 
-    // If there's only one philosopher, sleep for the time_to_die duration
-    if (philo->num_of_philos == 1)
-    {
-        usleep(philo->time_to_die * 1000);
-        pthread_mutex_unlock(philo->r_fork);
-        *philo->ptr_dead_flag = 1;
-        return;
-    }
+    
 
     // If there's more than one philosopher, try to lock the left fork
     pthread_mutex_lock(philo->l_fork);
@@ -84,6 +77,14 @@ void *routine(void *arg)
     if (philo->philo_id % 2 == 0)
 	    usleep(1);
     
+    if (philo->num_of_philos == 1)
+    {
+        usleep(philo->time_to_die * 1000);
+        *philo->ptr_dead_flag = 1;
+        safe_print(philo, " has died");
+        return arg;
+    }
+
     while (*philo->ptr_dead_flag != 1)
     {
         eat(philo);
