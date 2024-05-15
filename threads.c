@@ -46,12 +46,13 @@ static void set_dead_flag(t_program *set)
    //printf("Dead flag %d\n", set->dead_flag);
 }
 
-static void set_all_ate(t_philo *philo)
-{
-    if (philo->num_meals == philo->meals_eaten)//this I increment in eat routine
-       philo->all_ate = 1;
-}
+// static void set_all_ate(t_philo *philo)
+// {
+//     if (philo->num_meals == philo->meals_eaten)//this I increment in eat routine
+//        philo->all_ate = 1;
+// }
 //if all_philosophers has eaten n meals, return 1
+//REVISAR ESTA FUNCION
 static int all_meals_eaten(t_program *set)
 {
     int i = 0;
@@ -60,8 +61,8 @@ static int all_meals_eaten(t_program *set)
         return 0;
     while (i < set->philos[0].num_of_philos)//till i < num threads
     {
-        set_all_ate(&set->philos[i]);
-        
+        // if (set->philos[i].num_meals == set->philos[i].meals_eaten)//this I increment in eat routine
+        // set->philos[i].all_ate = 1;
         pthread_mutex_lock(set->philos[i].ptr_meal_lock);
         if (set->philos[i].all_ate == 1)
             finished_eating++;
