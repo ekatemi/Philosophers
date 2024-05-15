@@ -23,29 +23,7 @@
 //     //end mutex
 // }
 
-//function executed in each tread
-void *routine(void *arg)
-{
-    t_philo *philo;
 
-    philo = (t_philo *)arg;
-    //if id even - wait 1 ms
-    // if (philo->philo_id % 2 == 0)
-	// 	usleep(1);
-    
-    // while (not_dead(philo))
-    // {
-    //     eat(philo);
-    //     sleep(philo);
-    //     think(philo);
-    // }
-    
-    printf("Hello from philo %d, my left fork is %p and right forkis %p\n", philo->philo_id, philo->l_fork, philo->r_fork);
-    printf("Dead flag %d\n", *(philo->ptr_dead_flag));
-    // philo[0].all_ate = 1;
-    // *(philo[0].ptr_dead_flag) = 1;
-    return arg;
-}
 
 //we set dead flag to 1 if current time > last_meal + time_to_die
 static void set_dead_flag(t_program *set)
