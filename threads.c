@@ -34,7 +34,7 @@ static void set_dead_flag(t_program *set)
    while(i < set->philos[0].num_of_philos)
    {
         pthread_mutex_lock(set->philos[i].ptr_dead_lock);
-            if (curr_time > set->philos[i].last_meal + set->philos[i].time_to_die && !set->philos[i].eating)
+            if (curr_time > set->philos[i].last_meal + set->philos[i].time_to_die && set->philos[i].eating)//check here
             {
                 set->dead_flag = 1;
                 pthread_mutex_unlock(set->philos[i].ptr_dead_lock);

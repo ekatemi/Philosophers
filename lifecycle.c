@@ -25,28 +25,28 @@ static void ft_sleep(t_philo philo)
     usleep(philo.time_to_sleep * 1000);
 }
 
-static void eat(t_philo philo)
+static void eat(t_philo *philo)
 {
-    pthread_mutex_lock(philo.r_fork);
-	safe_print(philo, " has taken a fork");
-	if (philo.num_of_philos == 1)
+    pthread_mutex_lock(philo->r_fork);
+	safe_print(*philo, " has taken a fork");
+	if (philo->num_of_philos == 1)
 	{
-		usleep(philo.time_to_die * 1000);
-		pthread_mutex_unlock(philo.r_fork);
+		usleep(philo->time_to_die * 1000);
+		pthread_mutex_unlock(philo->r_fork);
 		return ;
 	}
-	pthread_mutex_lock(philo.l_fork);
-	safe_print(philo, " has taken a fork");
-	philo.eating = 1;
-	safe_print(philo, " is eating");
-	pthread_mutex_lock(philo.ptr_meal_lock);
-	philo.last_meal = get_current_time();
-	philo.meals_eaten++;
-	pthread_mutex_unlock(philo.ptr_meal_lock);
-	usleep(philo.time_to_eat * 1000);
-	philo.eating = 0;
-	pthread_mutex_unlock(philo.l_fork);
-	pthread_mutex_unlock(philo.r_fork);
+	pthread_mutex_lock(philo->l_fork);
+	safe_print(*philo, " has taken a fork");
+	philo->eating = 1;
+	safe_print(*philo, " is eating");
+	pthread_mutex_lock(philo->ptr_meal_lock);
+	philo->last_meal = get_current_time();
+	philo->meals_eaten++;
+	pthread_mutex_unlock(philo->ptr_meal_lock);
+	usleep(philo->time_to_eat * 1000);
+	philo->eating = 0;  //here if time over but philo is eating he is ok
+	pthread_mutex_unlock(philo->l_fork);
+	pthread_mutex_unlock(philo->r_fork);
 }
 
 //function executed in each tread
@@ -61,7 +61,7 @@ void *routine(void *arg)
     
     while (*philo->ptr_dead_flag != 1)
     {
-        eat(*philo);
+        eat(philo);
         ft_sleep(*philo);
         think(*philo);
     }
