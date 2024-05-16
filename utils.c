@@ -10,25 +10,23 @@ size_t	get_current_time(void)
 	return (time.tv_sec * 1000 + time.tv_usec / 1000);
 }
 
-int ft_atoi(char *str)
+//returns 0 if number is 0 or negative
+unsigned int ft_atoi(char *str)
 {
-    int sign;
     int res;
-
-    sign = 1;
     res = 0;
     while (*str == ' ' || *str == '\n' || *str == '\t')
         str++;
     if (*str == '-')
-        sign = -1;
-    if (*str == '-' || *str == '+')
+        return (0);
+    if (*str == '+')
         str++;
     while (*str >= '0' && *str <= '9')
     {
         res = res * 10 + (*str - '0');
         str++;
     }
-    return (res * sign);
+    return (res);
 }
 
 

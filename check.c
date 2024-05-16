@@ -34,6 +34,11 @@ int input_ok(int argc, char **argv)
                 ft_putstr_fd("Only numbers allowed", 2);
                 return (0);
             }
+            if (ft_atoi(argv[i]) == 0)
+            {
+                ft_putstr_fd("Only numbers > 0", 2);
+                return(0);
+            }
             i++;
         }
     }

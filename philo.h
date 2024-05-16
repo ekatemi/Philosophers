@@ -26,7 +26,7 @@ typedef struct s_philo
     pthread_t		thread;
 	int				philo_id;
 	int				eating; //1 0
-	int				meals_eaten; //++
+	int				meals_counter; //++
 	int				all_ate;//1 or 0
 	size_t			last_meal; //start eating + time to eat
 	size_t			time_to_die;
@@ -44,7 +44,7 @@ typedef struct s_philo
 }   t_philo;
 
 typedef struct s_program
-{
+{			
 	int				dead_flag;
 	pthread_mutex_t	dead_lock;
 	pthread_mutex_t	meal_lock;
@@ -72,6 +72,6 @@ void *monitor(void *arg);
 
 //UTILS
 size_t	get_current_time(void);
-int ft_atoi(char *str);
+unsigned int ft_atoi(char *str);
 
 #endif
