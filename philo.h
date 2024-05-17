@@ -40,7 +40,7 @@ typedef struct s_philo
 	// pthread_mutex_t	*ptr_write_lock;
 	// pthread_mutex_t	*ptr_dead_lock;
 	// pthread_mutex_t	*ptr_meal_lock;
-	t_program *program;
+	struct s_program *program;
 }   t_philo;
 
 typedef struct s_program

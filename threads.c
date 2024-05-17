@@ -14,15 +14,18 @@ void *monitor(void *arg)
 {
     t_program *set;
     set = (t_program *)arg;
+    
     while(1)
     {
        pthread_mutex_lock(&set->dead_lock);
         if (set->dead_flag == 1) 
         {
             pthread_mutex_unlock(&set->dead_lock);
+            printf("Monitor exited because dead_flag == 1\n");
             break;
         }
-        pthread_mutex_unlock(&set->dead_lock);
+        else
+            pthread_mutex_unlock(&set->dead_lock);
         usleep(500);
     }
     return (arg);
