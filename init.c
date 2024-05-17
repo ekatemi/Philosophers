@@ -15,15 +15,15 @@ void	init_input(t_philo *data, char **argv)
 void	set_philosophers(t_philo *data, t_program *set)
 {
 	size_t	start_time;
-	int	 i;
-	i = 0;
+	int	 i = 0;
 	start_time = get_current_time();
+	set->dead_flag = 0;
+	set->finished_philo_counter = 0;
 	while(i < data->num_of_philos)
 	{
 		set->philos[i].philo_id = i + 1;
 		set->philos[i].eating = 0;
 		set->philos[i].meals_counter = 0;
-		set->philos[i].all_ate = 0;
 		set->philos[i].last_meal = start_time;
 		set->philos[i].start_time = start_time; //same for everyone
 		set->philos[i].num_of_philos = data->num_of_philos; //same for everyone
@@ -31,16 +31,17 @@ void	set_philosophers(t_philo *data, t_program *set)
 		set->philos[i].time_to_eat = data->time_to_eat; //same for everyone
 		set->philos[i].time_to_sleep = data->time_to_sleep; //same for everyone
 		set->philos[i].num_meals = data->num_meals; //same for everyone
-		//set->philos[i].ptr_dead_flag = NULL;
+		set->philos[i].ptr_dead_flag = &set->dead_flag;
+		set->philos[i].program = set;
+
 		i++;
 	}
 }
 
 void init_mutexes(t_program *set, t_philo *data)
 {
-	int	i;
-
-	i = 0;
+	int	i = 0;
+	
 	set->philos = malloc(data->num_of_philos * sizeof(t_philo));
 	if (!set->philos)
 	{
@@ -55,7 +56,6 @@ void init_mutexes(t_program *set, t_philo *data)
 		exit(EXIT_FAILURE);
 	}
 		
-	set->dead_flag = 0;
 	pthread_mutex_init(&set->write_lock, NULL);
     pthread_mutex_init(&set->meal_lock, NULL);
     pthread_mutex_init(&set->dead_lock, NULL);
@@ -65,9 +65,6 @@ void init_mutexes(t_program *set, t_philo *data)
 		set->philos[i].l_fork = &set->forks[i];
 		set->philos[i].r_fork = &set->forks[(i + 1) % data->num_of_philos];
 		set->philos[i].ptr_dead_flag = &set->dead_flag;
-		set->philos[i].ptr_write_lock = &set->write_lock;
-		set->philos[i].ptr_meal_lock = &set->meal_lock;
-		set->philos[i].ptr_dead_lock = &set->dead_lock;
 		i++;
 	}
 }
@@ -75,9 +72,8 @@ void init_mutexes(t_program *set, t_philo *data)
 void cleanup_all(t_program *set)
 {
 	
-	int	i;
+	int	i = 0;
 
-	i = 0;
 	while (i < set->philos[0].num_of_philos)
 	{
 		pthread_mutex_destroy(&set->forks[i]);
@@ -92,9 +88,8 @@ void cleanup_all(t_program *set)
 
 void	create_and_join_threads(t_philo *data, t_program *set)
 {
-	int	i;
+	int	i = 0;
 
-	i = 0;
 	pthread_t		monitor_thread;
 	if (pthread_create(&monitor_thread, NULL, monitor, set))
 		{
@@ -105,7 +100,7 @@ void	create_and_join_threads(t_philo *data, t_program *set)
 
 	while (i < data->num_of_philos)
 	{
-		if (pthread_create(&set->philos[i].thread, NULL, routine, &set->philos[i]))///fucking pointer!!!
+		if (pthread_create(&set->philos[i].thread, NULL, routine, &set->philos[i]))
 		{
 			ft_putstr_fd("Error thread create", 2);
 			cleanup_all(set);
