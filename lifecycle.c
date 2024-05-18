@@ -98,15 +98,15 @@ static void eat(t_philo *philo)
         philo->program->finished_philo_counter++;
         pthread_mutex_unlock(&philo->program->meal_lock);
         
-        pthread_mutex_lock(&philo->program->write_lock);
-        printf("ALL eaten count %d\n", philo->program->finished_philo_counter);
-        pthread_mutex_unlock(&philo->program->write_lock);
+        // pthread_mutex_lock(&philo->program->write_lock);
+        // printf("ALL eaten count %d\n", philo->program->finished_philo_counter);
+        // pthread_mutex_unlock(&philo->program->write_lock);
         
     }
     else
         pthread_mutex_unlock(&philo->program->meal_lock);
     pthread_mutex_lock(&philo->program->meal_lock);
-    if (philo->program->finished_philo_counter >= philo->num_of_philos)
+    if (philo->program->finished_philo_counter == philo->num_of_philos)
     {
         pthread_mutex_unlock(&philo->program->meal_lock);
         pthread_mutex_lock(&philo->program->dead_lock);
@@ -116,7 +116,7 @@ static void eat(t_philo *philo)
     pthread_mutex_unlock(&philo->program->meal_lock);
     
     pthread_mutex_lock(&philo->program->write_lock);
-    printf("dead flag %d\n", *philo->ptr_dead_flag);
+    printf("dead flag in thread =%d\n", *philo->ptr_dead_flag);
     pthread_mutex_unlock(&philo->program->write_lock);
     
     usleep(philo->time_to_eat * 1000);
@@ -126,10 +126,8 @@ static void eat(t_philo *philo)
 //function executed in each tread
 void *routine(void *arg)
 {
-    t_philo *philo;
+    t_philo *philo = (t_philo *)arg;
 
-    philo = (t_philo *)arg;
-   
     if (philo->num_of_philos == 1)
     {
         usleep(philo->time_to_die * 1000);
@@ -139,28 +137,67 @@ void *routine(void *arg)
         print_death(philo);
         return arg;
     }
-    
-    //printf("General meals count %d\n", set->finished_philo_counter);
-    //pthread_mutex_lock(&philo->program->dead_lock);
-    while (1) 
+
+    while (1)
     {
         pthread_mutex_lock(&philo->program->dead_lock);
         if (*philo->ptr_dead_flag == 1)
         {
             pthread_mutex_unlock(&philo->program->dead_lock);
-            printf("thread #exited because dead_flag\n");
-            break ;
+            printf("Thread %d exited because dead_flag is set\n", philo->philo_id);
+            break;
         }
-        else
-            pthread_mutex_unlock(&philo->program->dead_lock);
-        
-        eat(philo);
-        ft_sleep(*philo);
-        think(*philo);      
-    }
-    printf("Hello from philo %d, my left fork is %p and right forkis %p and meal counter is %d\n", philo->philo_id, philo->l_fork, philo->r_fork, philo->meals_counter);
-    printf("Dead flag %d\n", philo->program->dead_flag);
+        pthread_mutex_unlock(&philo->program->dead_lock);
 
+        pthread_mutex_lock(&philo->program->meal_lock);
+        if (philo->program->finished_philo_counter >= philo->num_of_philos)
+        {
+            pthread_mutex_unlock(&philo->program->meal_lock);
+            printf("Thread %d exited because all philosophers finished eating\n", philo->philo_id);
+            break;
+        }
+        pthread_mutex_unlock(&philo->program->meal_lock);
+
+        eat(philo);
+
+        // Add a check after eating
+        pthread_mutex_lock(&philo->program->dead_lock);
+        if (*philo->ptr_dead_flag == 1)
+        {
+            pthread_mutex_unlock(&philo->program->dead_lock);
+            printf("Thread %d detected dead_flag after eating\n", philo->philo_id);
+            break;
+        }
+        pthread_mutex_unlock(&philo->program->dead_lock);
+
+        ft_sleep(*philo);
+
+        // Add a check after sleeping
+        pthread_mutex_lock(&philo->program->dead_lock);
+        if (*philo->ptr_dead_flag == 1)
+        {
+            pthread_mutex_unlock(&philo->program->dead_lock);
+            printf("Thread %d detected dead_flag after sleeping\n", philo->philo_id);
+            break;
+        }
+        pthread_mutex_unlock(&philo->program->dead_lock);
+
+        think(*philo);
+
+        // Add a check after thinking
+        pthread_mutex_lock(&philo->program->dead_lock);
+        if (*philo->ptr_dead_flag == 1)
+        {
+            pthread_mutex_unlock(&philo->program->dead_lock);
+            printf("Thread %d detected dead_flag after thinking\n", philo->philo_id);
+            break;
+        }
+        pthread_mutex_unlock(&philo->program->dead_lock);
+    }
+
+    printf("Thread %d fully exited\n", philo->philo_id);
     return arg;
 }
+
+
 
