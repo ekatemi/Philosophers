@@ -10,6 +10,16 @@ size_t	get_current_time(void)
 	return (time.tv_sec * 1000 + time.tv_usec / 1000);
 }
 
+int	ft_usleep(size_t milliseconds)
+{
+	size_t	start;
+
+	start = get_current_time();
+	while ((get_current_time() - start) < milliseconds)
+		usleep(500);
+	return (0);
+}
+
 //returns 0 if number is 0 or negative
 unsigned int ft_atoi(char *str)
 {
@@ -38,3 +48,4 @@ void ft_putstr_fd(char *str, int fd)
         write(fd, str++, 1);
     //write(fd, "\n", 1);
 }
+

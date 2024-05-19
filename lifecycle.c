@@ -49,62 +49,47 @@ static void ft_sleep(t_philo *philo)
 {
     
     safe_print(philo, " is sleeping");
-    usleep(philo->time_to_sleep * 1000);
+    ft_usleep(philo->time_to_sleep);
 }
 
 //print only if dead flag is 0
 static void eat(t_philo *philo)
 {
-    if (philo->philo_id % 2 != 0)
-	    usleep(1000);
-    
     // Lock the right fork
-    pthread_mutex_lock(philo->r_fork);//
+    pthread_mutex_lock(philo->r_fork);
     safe_print(philo, " has taken right fork");
-    
-    
-    //Lock the left fork
-    pthread_mutex_lock(philo->l_fork);//
+
+    // Lock the left fork
+    pthread_mutex_lock(philo->l_fork);
     safe_print(philo, " has taken left fork");
-    
-    
-    
-    pthread_mutex_lock(&philo->program->meal_lock);
-    philo->last_meal = get_current_time();
-    pthread_mutex_unlock(&philo->program->meal_lock);
-    
+
+    // Indicate that the philosopher is eating
     safe_print(philo, " is eating");
 
+    // Update the last meal time
     pthread_mutex_lock(&philo->program->meal_lock);
-    philo->eating = 1;
-    pthread_mutex_unlock(&philo->program->meal_lock);
-    
-    
+    philo->last_meal = get_current_time();
     philo->meals_counter++;
-    if (philo->num_meals != -1 && philo->meals_counter == philo->num_meals)//check if there is num meals
-        philo->flag_all_ate = 1;
+    pthread_mutex_unlock(&philo->program->meal_lock);
 
-
-//update philos finished meals (shared, so mutex)
-    pthread_mutex_lock(&philo->program->meal_lock);
-    if (philo->flag_all_ate == 1)
+    // Check if all meals have been consumed
+    if (philo->num_meals != -1 && philo->meals_counter == philo->num_meals)
     {
+        pthread_mutex_lock(&philo->program->meal_lock);
         philo->program->finished_philo_counter++;
+        philo->eating = 0;
         printf("philos finished meals------------------- %d\n", philo->program->finished_philo_counter);
         pthread_mutex_unlock(&philo->program->meal_lock);
-        
     }
-    pthread_mutex_unlock(&philo->program->meal_lock);
+
+        // Sleep for the eating duration
     
-    usleep(philo->time_to_eat * 1000);
-    
-    //put the forks downZ
+    // Release the left fork
     pthread_mutex_unlock(philo->l_fork);
-    pthread_mutex_unlock(philo->r_fork);
     
-    pthread_mutex_lock(&philo->program->meal_lock);
-    philo->eating = 0;
-    pthread_mutex_unlock(&philo->program->meal_lock);
+    // Release the right fork
+    pthread_mutex_unlock(philo->r_fork);
+    ft_usleep(philo->time_to_eat);
 }
 
 
@@ -113,10 +98,12 @@ void *routine(void *arg)
 {
     t_philo *philo = (t_philo *)arg;
 
+    if (philo->philo_id % 2 == 0)
+        ft_usleep(philo->time_to_eat);
+
     if (philo->num_of_philos == 1)
     {
-        usleep(philo->time_to_die * 1000);
-        //print_death(philo);
+        ft_usleep(philo->time_to_die);
         pthread_mutex_lock(&philo->program->dead_lock);
         *philo->ptr_dead_flag = 1;
         pthread_mutex_unlock(&philo->program->dead_lock);
@@ -125,11 +112,8 @@ void *routine(void *arg)
     //end all threads id dead flag == 1
     while (!check_dead_flag(philo))
     {
-        
-        eat(philo); 
-        
+        eat(philo);    
         ft_sleep(philo);
-
         think(philo);  
     }
     return arg;

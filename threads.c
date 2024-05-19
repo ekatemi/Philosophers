@@ -100,6 +100,20 @@ void check_still_alive(t_philo *philo)
 //     return 0;
 // }
 
+// for (i = 0; i < program->philos->num_of_philos; i++)
+//         {
+//             current_time = get_current_time();
+//             // Check if the philosopher has died
+//             if (program->philos[i].eating == 0 && (current_time - program->philos[i].last_meal > program->philos[i].time_to_die))
+//             {
+//                 pthread_mutex_unlock(&program->meal_lock); // Unlock before setting the dead flag and printing
+//                 pthread_mutex_lock(&program->dead_lock);
+//                 *program->philos[i].ptr_dead_flag = 1;
+//                 pthread_mutex_unlock(&program->dead_lock);
+//                 print_death(&program->philos[i]);
+//                 return NULL;
+//             }
+
 void *monitor(void *arg)
 {
     t_program *program = (t_program *)arg;
@@ -135,7 +149,7 @@ void *monitor(void *arg)
         }
         pthread_mutex_unlock(&program->meal_lock); // Unlock after iterating through all philosophers
         
-        usleep(500); // Sleep for a short period to reduce CPU usage
+        //usleep(250); // Sleep for a short period to reduce CPU usage
     }
     return NULL;
 }

@@ -78,5 +78,5 @@ unsigned int ft_atoi(char *str);
 void print_death(t_philo *philo);
 int check_dead_flag(t_philo *philo);
 void safe_print(t_philo *philo, char *str);
-
+int	ft_usleep(size_t milliseconds);
 #endif
