@@ -22,20 +22,25 @@ int check_dead_flag(t_philo *philo)
 //does not print after death flag set
 void safe_print(t_philo *philo, char *str)
 {
-    if (!check_dead_flag(philo)) 
-    {
-        pthread_mutex_lock(&philo->program->write_lock);  // Lock the write mutex for printing
-        printf("%zu philo id #%d %s\n", get_current_time() - philo->start_time, philo->philo_id, str);
-        pthread_mutex_unlock(&philo->program->write_lock);  // Unlock the write mutex after printing
-    }
+    time_t cur_time;
+    if (check_dead_flag(philo))
+        return ;
+    cur_time = get_current_time() - philo->start_time;
+    pthread_mutex_lock(&philo->program->write_lock);  // Lock the write mutex for printing
+    printf("%zu philo id #%d %s\n", cur_time, philo->philo_id, str);
+    pthread_mutex_unlock(&philo->program->write_lock);  // Unlock the write mutex after printing
+    
 }
 
 //prints death, so dead flag should be set to 1 before or after
 void print_death(t_philo *philo)
 {    
-        pthread_mutex_lock(&philo->program->write_lock);  // Lock the write mutex for printing
-        printf("%zu philo id #%d has died\n", get_current_time() - philo->start_time, philo->philo_id);
-        pthread_mutex_unlock(&philo->program->write_lock);  // Unlock the write mutex after printing
+    time_t cur_time;
+    
+    cur_time = get_current_time() - philo->start_time;
+    pthread_mutex_lock(&philo->program->write_lock);  // Lock the write mutex for printing
+    printf("%zu philo id #%d has died\n", cur_time, philo->philo_id);
+    pthread_mutex_unlock(&philo->program->write_lock);  // Unlock the write mutex after printing
 }
 
 //print only if dead flag is 0
@@ -47,7 +52,6 @@ static void think(t_philo *philo)
 //print only if dead flag is 0
 static void ft_sleep(t_philo *philo)
 {
-    
     safe_print(philo, " is sleeping");
     ft_usleep(philo->time_to_sleep);
 }
@@ -58,7 +62,6 @@ static void eat(t_philo *philo)
     // Lock the right fork
     pthread_mutex_lock(philo->r_fork);
     safe_print(philo, " has taken right fork");
-
     // Lock the left fork
     pthread_mutex_lock(philo->l_fork);
     safe_print(philo, " has taken left fork");
@@ -99,7 +102,7 @@ void *routine(void *arg)
     t_philo *philo = (t_philo *)arg;
 
     if (philo->philo_id % 2 == 0)
-        ft_usleep(philo->time_to_eat);
+        ft_usleep(1);
 
     if (philo->num_of_philos == 1)
     {
