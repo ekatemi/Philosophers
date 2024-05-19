@@ -14,7 +14,7 @@ static void safe_print(t_philo *philo, char *str)
     {
         pthread_mutex_unlock(&philo->program->dead_lock);  // Unlock the mutex if no dead flag
         pthread_mutex_lock(&philo->program->write_lock);  // Lock the write mutex for printing
-        printf("%zu philo id #%d %s\n", get_current_time(), philo->philo_id, str);
+        printf("%zu philo id #%d %s\n", get_current_time() - philo->start_time, philo->philo_id, str);
         pthread_mutex_unlock(&philo->program->write_lock);  // Unlock the write mutex after printing
     }
     else
@@ -28,7 +28,7 @@ static void print_death(t_philo *philo)
     {
         pthread_mutex_unlock(&philo->program->dead_lock);  // Unlock the mutex if no dead flag
         pthread_mutex_lock(&philo->program->write_lock);  // Lock the write mutex for printing
-        printf("%zu philo id #%d has died\n", get_current_time(), philo->philo_id);
+        printf("%zu philo id #%d has died\n", get_current_time() - philo->start_time, philo->philo_id);
         pthread_mutex_unlock(&philo->program->write_lock);  // Unlock the write mutex after printing
     }
     pthread_mutex_unlock(&philo->program->dead_lock);  // Unlock the mutex if dead flag is set
@@ -79,21 +79,18 @@ static void eat(t_philo *philo)
     pthread_mutex_lock(philo->l_fork);//
     safe_print(philo, " has taken left fork");
     
-    philo->last_meal = get_current_time();
+    philo->last_meal = get_current_time() - philo->start_time;
     safe_print(philo, " is eating");
 
     philo->eating = 1;
     philo->meals_counter++;
     
-    printf("philo id %d, death_flag %d, meals counter %d\n", philo->philo_id, *philo->ptr_dead_flag, philo->meals_counter);
-    
-    //put the forks down
-    pthread_mutex_unlock(philo->l_fork);
-    pthread_mutex_unlock(philo->r_fork);
-    
+    pthread_mutex_lock(&philo->program->meal_lock);
+    printf("meals counter %d\n", philo->meals_counter);
+    pthread_mutex_unlock(&philo->program->meal_lock);
 
     pthread_mutex_lock(&philo->program->meal_lock);
-    if (philo->num_meals != -1 && philo->meals_counter >= philo->num_meals)
+    if (philo->num_meals != -1 && philo->meals_counter == philo->num_meals)
     {
         philo->program->finished_philo_counter++;
         pthread_mutex_unlock(&philo->program->meal_lock);
@@ -115,11 +112,12 @@ static void eat(t_philo *philo)
     }
     pthread_mutex_unlock(&philo->program->meal_lock);
     
-    pthread_mutex_lock(&philo->program->write_lock);
-    printf("dead flag in thread =%d\n", *philo->ptr_dead_flag);
-    pthread_mutex_unlock(&philo->program->write_lock);
+
     
     usleep(philo->time_to_eat * 1000);
+    //put the forks down
+    pthread_mutex_unlock(philo->l_fork);
+    pthread_mutex_unlock(philo->r_fork);
 }
 
 

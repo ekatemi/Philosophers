@@ -38,7 +38,7 @@ int main (int argc, char **argv)
     t_program set;
     if (!input_ok(argc, argv))
         return(1);
-    printf("START TIME\n%zu\n", get_current_time());
+    printf("START TIME\n%zu\n", get_current_time() - get_current_time());
     init_input(&data, argv);
     printf("INPUT: num philo %d\ntime to die %zu\ntime to eat %zu\ntime to sleep %zu\noptional %d\n", data.num_of_philos, data.time_to_die, data.time_to_eat, data.time_to_sleep, data.num_meals);
     init_mutexes(&set, &data);
