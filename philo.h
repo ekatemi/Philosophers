@@ -26,6 +26,7 @@ typedef struct s_philo
     pthread_t		thread;
 	int				philo_id;
 	int				eating; //1 0
+	int				flag_all_ate; //1 0 if meals counter == num_meals
 	int				meals_counter; //++
 	size_t			last_meal; //start eating + time to eat
 	size_t			time_to_die;
@@ -74,5 +75,8 @@ void *monitor(void *arg);
 //UTILS
 size_t	get_current_time(void);
 unsigned int ft_atoi(char *str);
+void print_death(t_philo *philo);
+int check_dead_flag(t_philo *philo);
+void safe_print(t_philo *philo, char *str);
 
 #endif

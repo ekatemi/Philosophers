@@ -24,6 +24,7 @@ void	set_philosophers(t_philo *data, t_program *set)
 		set->philos[i].philo_id = i + 1;
 		set->philos[i].eating = 0;
 		set->philos[i].meals_counter = 0;
+		set->philos[i].flag_all_ate = 0;
 		set->philos[i].last_meal = start_time;
 		set->philos[i].start_time = start_time; //same for everyone
 		set->philos[i].num_of_philos = data->num_of_philos; //same for everyone
