@@ -123,11 +123,12 @@ void *monitor(void *arg)
     while (1)
     {
         pthread_mutex_lock(&program->meal_lock); // Lock meal_lock to safely read shared data
-        for (i = 0; i < program->philos->num_of_philos; i++)
+        i = 0;
+        while (i < program->philos->num_of_philos)
         {
             current_time = get_current_time();
             // Check if the philosopher has died
-            if (program->philos[i].eating == 0 && (current_time - program->philos[i].last_meal > program->philos[i].time_to_die))
+            if (current_time - program->philos[i].last_meal > program->philos[i].time_to_die)
             {
                 pthread_mutex_unlock(&program->meal_lock); // Unlock before setting the dead flag and printing
                 pthread_mutex_lock(&program->dead_lock);
@@ -146,6 +147,8 @@ void *monitor(void *arg)
                 pthread_mutex_unlock(&program->dead_lock);
                 return NULL;
             }
+
+            i++; // Increment the index
         }
         pthread_mutex_unlock(&program->meal_lock); // Unlock after iterating through all philosophers
         
@@ -153,3 +156,4 @@ void *monitor(void *arg)
     }
     return NULL;
 }
+
