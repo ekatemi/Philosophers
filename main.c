@@ -25,25 +25,24 @@ with a mutex for each of them.*/
 // argv[4] time to sleep  (in milliseconds)
 // argv[5] arr number of time each philo must eat OPTIONAL
 
-// void *monitor()
-// {
-//     printf("Im a monitor\n");
-//     return NULL;
-// }
-
 int main (int argc, char **argv)
 {
     //idata holds data from input
     t_philo data;
     t_program set;
+    //input check
     if (!input_ok(argc, argv))
         return(1);
+    //start program
     printf("START TIME\n%zu\n", get_current_time() - get_current_time());
     init_input(&data, argv);
     printf("INPUT: num philo %d\ntime to die %zu\ntime to eat %zu\ntime to sleep %zu\noptional %d\n", data.num_of_philos, data.time_to_die, data.time_to_eat, data.time_to_sleep, data.num_meals);
     init_mutexes(&set, &data);
+    //init philos
     set_philosophers(&data, &set);
+    //create and join threads and monitor
     create_and_join_threads(&data, &set);
+    //destroy and free
     cleanup_all(&set);
     return (0);
 }

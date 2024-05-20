@@ -28,7 +28,7 @@ typedef struct s_philo
 	int				eating; //1 0
 	int				flag_all_ate; //1 0 if meals counter == num_meals
 	int				meals_counter; //++
-	size_t			last_meal; //start eating + time to eat
+	size_t			last_meal; //start eating + time to eat//shared
 	size_t			time_to_die;
 	size_t			time_to_eat;
 	size_t			time_to_sleep;
@@ -38,9 +38,6 @@ typedef struct s_philo
 	int				*ptr_dead_flag;
 	pthread_mutex_t	*r_fork;
 	pthread_mutex_t	*l_fork;
-	// pthread_mutex_t	*ptr_write_lock;
-	// pthread_mutex_t	*ptr_dead_lock;
-	// pthread_mutex_t	*ptr_meal_lock;
 	struct s_program *program;
 }   t_philo;
 

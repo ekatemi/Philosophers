@@ -5,6 +5,7 @@
 // ◦ timestamp_in_ms X is sleeping
 // ◦ timestamp_in_ms X is thinking
 // ◦ timestamp_in_ms X died
+
 // static size_t get_last_meal_time(t_philo *philo)
 // {
 //     size_t last_meal_time = 0;
@@ -13,12 +14,13 @@
 //     pthread_mutex_unlock(&philo->program->meal_lock);
 //     return last_meal_time;
 // }
-//ROUTINES
+
+//check if this particular philo is dead
 static int is_dead(t_philo *philo)
 {
-    size_t time = get_current_time();
+    //size_t time = get_current_time();
     pthread_mutex_lock(&philo->program->meal_lock);
-    if(philo->eating == 0 && (philo->last_meal + philo->time_to_die) < time)
+    if(philo->eating == 0 && (philo->last_meal + philo->time_to_die) < get_current_time())
     {
         pthread_mutex_unlock(&philo->program->meal_lock);
         print_death(philo);
@@ -37,9 +39,7 @@ static int check_all_philos(t_program *program)
     {
         ft_usleep(program->philos[0].time_to_die);
         print_death(&program->philos[i]);
-        // pthread_mutex_lock(&program->dead_lock);
-        // *philo->ptr_dead_flag = 1;
-        // pthread_mutex_unlock(&program->dead_lock);
+       
         return 1;
     }
     
@@ -74,9 +74,6 @@ static int all_ate(t_program *program)
     {
         if (program->philos[i].num_meals != -1 && finish_meal_counter(program) == program->philos[1].num_of_philos)
         {
-            // pthread_mutex_lock(&program->dead_lock);
-            // program->dead_flag = 1;
-            // pthread_mutex_unlock(&program->dead_lock);
             return 1;
         }
         i++;
@@ -88,8 +85,6 @@ static int all_ate(t_program *program)
 void *monitor(void *arg)
 {
     t_program *program = (t_program *)arg;
-    //size_t current_time;
-    //int i;
 
     while (1)
     {    
@@ -104,35 +99,9 @@ void *monitor(void *arg)
             return arg;
         }
         
-        
-        // pthread_mutex_lock(&program->meal_lock); // Lock meal_lock to safely read shared data
-        // for (i = 0; i < program->philos->num_of_philos; i++)
-        // {
-        //     current_time = get_current_time();
-        //     // Check if the philosopher has died
-        //     if (program->philos[i].eating == 0 && (current_time - program->philos[i].last_meal > program->philos[i].time_to_die))
-        //     {
-        //         pthread_mutex_unlock(&program->meal_lock); // Unlock before setting the dead flag and printing
-        //         pthread_mutex_lock(&program->dead_lock);
-        //         *program->philos[i].ptr_dead_flag = 1;
-        //         pthread_mutex_unlock(&program->dead_lock);
-        //         print_death(&program->philos[i]);
-        //         return NULL;
-        //     }
-
-        //     // Check if all philosophers have finished eating
-        //     if (program->philos[i].num_meals != -1 && program->finished_philo_counter == program->philos->num_of_philos)
-        //     {
-        //         pthread_mutex_unlock(&program->meal_lock); // Unlock before setting the dead flag
-        //         pthread_mutex_lock(&program->dead_lock);
-        //         program->dead_flag = 1;
-        //         pthread_mutex_unlock(&program->dead_lock);
-        //         return NULL;
-        //     }
-        // }
-        // pthread_mutex_unlock(&program->meal_lock); // Unlock after iterating through all philosophers
-        
-        usleep(250); // Sleep for a short period to reduce CPU usage
+        //usleep(250); // Sleep for a short period to reduce CPU usage
     }
     return NULL;
 }
+
+//dies when ./philo 5 410 200 200 
