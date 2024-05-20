@@ -104,9 +104,11 @@ void *routine(void *arg)
     if (philo->num_of_philos == 1)
     {
         ft_usleep(philo->time_to_die);
+        //print_death(philo);
         pthread_mutex_lock(&philo->program->dead_lock);
         *philo->ptr_dead_flag = 1;
         pthread_mutex_unlock(&philo->program->dead_lock);
+        
         return arg;
     }
     //end all threads id dead flag == 1
