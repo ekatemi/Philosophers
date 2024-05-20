@@ -82,15 +82,15 @@ static void eat(t_philo *philo)
     ft_usleep(philo->time_to_eat);
 
     // Mark the philosopher as not eating
-    pthread_mutex_lock(&philo->program->meal_lock);
+    //pthread_mutex_lock(&philo->program->meal_lock);
     //philo->eating = 0;
 
     // Check if all meals have been consumed
-    if (philo->num_meals != -1 && philo->meals_counter == philo->num_meals)
-    {
-        philo->program->finished_philo_counter++;
-    }
-    pthread_mutex_unlock(&philo->program->meal_lock);
+    // if (philo->num_meals != -1 && philo->meals_counter == philo->num_meals)
+    // {
+    //     philo->program->finished_philo_counter++;
+    // }
+    // pthread_mutex_unlock(&philo->program->meal_lock);
 
     // Release the forks
     pthread_mutex_unlock(philo->l_fork);

@@ -6,105 +6,93 @@
 // ◦ timestamp_in_ms X is thinking
 // ◦ timestamp_in_ms X died
 
-//ROUTINES
-void check_still_alive(t_philo *philo)
+
+// Check if any philo died
+
+int	check_if_dead(t_philo *philos)
 {
-    size_t time = get_current_time();
-    if(philo->eating == 0 && (philo->last_meal + philo->time_to_die) < time)
-    {
-        pthread_mutex_lock(&philo->program->dead_lock);
-        *philo->ptr_dead_flag = 1;
-        pthread_mutex_unlock(&philo->program->dead_lock);
-        print_death(philo);
-    }
+	int	i;
+
+	i = 0;
+	while (i < philos[0].num_of_philos)
+	{
+		pthread_mutex_lock(&philos[0].program->meal_lock);
+        if (get_current_time() - philos[i].last_meal >= philos[0].time_to_die)
+		{
+			pthread_mutex_unlock(&philos[0].program->meal_lock);
+            print_death(&philos[i]);
+			// pthread_mutex_lock(&philos[0].program->dead_lock);
+			// *philos->ptr_dead_flag = 1;
+			// pthread_mutex_unlock(&philos[0].program->dead_lock);
+			return (1);
+		}
+        pthread_mutex_unlock(&philos[0].program->meal_lock);
+		i++;
+	}
+	return (0);
 }
 
-//chack if all fh
-    // pthread_mutex_lock(&philo->program->meal_lock);
-    // if (philo->program->finished_philo_counter == philo->num_of_philos)
-    // {
-    //     pthread_mutex_unlock(&philo->program->meal_lock);
-    //     pthread_mutex_lock(&philo->program->dead_lock);
-    //     *philo->ptr_dead_flag = 1;
-    //     pthread_mutex_unlock(&philo->program->dead_lock);
-    // }
-    // pthread_mutex_unlock(&philo->program->meal_lock);
-//if one philo have died it sets dead for all
-//waits till all_ate (this also sets dead flag)
+// Checks if all the philos ate the num_of_meals
 
-//iterates all threads checking time to starve, if so sets dead flag and prints time of death
-//1 dead 0 not
+int	check_if_all_ate(t_philo *philos)
+{
+	int	i;
+	int	finished_eating;
 
-//here err
-// Checks if the philosopher is dead
+	i = 0;
+	finished_eating = 0;
+	if (philos[0].num_meals == -1)
+		return (0);
+	while (i < philos[0].num_of_philos)
+	{
+		pthread_mutex_lock(&philos[i].program->meal_lock);
+		if (philos[i].meals_counter >= philos[i].num_meals)
+			finished_eating++;
+		pthread_mutex_unlock(&philos[i].program->meal_lock);
+		i++;
+	}
+	if (finished_eating == philos[0].num_of_philos)
+	{
 
-// int philosopher_dead(t_philo *philo, size_t time_to_die) {
-//     if (philo == NULL || philo->program == NULL) return 0;
+		return (1);
+	}
+	return (0);
+}
 
-//     pthread_mutex_lock(&philo->program->meal_lock);
-//     int is_dead = (get_current_time() - philo->last_meal >= time_to_die && philo->eating == 0);
-//     pthread_mutex_unlock(&philo->program->meal_lock);
+// Monitor thread routine
 
-//     return is_dead;
-// }
+void	*monitor(void *pointer)
+{
+	t_philo	*philos;
 
-// // Check if any philo died
-
-// int check_if_dead(t_philo *philos) {
-//     if (philos == NULL || philos[0].program == NULL) return 0;
-
-//     for (int i = 0; i < philos[0].num_of_philos; i++) {
-//         if (philosopher_dead(&philos[i], philos[0].time_to_die)) {
-//             pthread_mutex_lock(&philos[0].program->dead_lock);
-//             if (*philos[i].ptr_dead_flag == 0) {
-//                 *philos[i].ptr_dead_flag = 1;
-//                 pthread_mutex_unlock(&philos[0].program->dead_lock);
-//                 print_death(&philos[i]);
-//                 return 1;
-//             }
-//             pthread_mutex_unlock(&philos[0].program->dead_lock);
-//         }
-//     }
-//     return 0;
-// }
-
-// static int check_for_all_eaten(t_program *set)
+	philos = (t_philo *)pointer;
+	while (1)
+		if (check_if_dead(philos) == 1 || check_if_all_ate(philos) == 1)
+        {
+            pthread_mutex_lock(&philos[0].program->dead_lock);
+		    *philos->ptr_dead_flag = 1;
+		    pthread_mutex_unlock(&philos[0].program->dead_lock);
+            break ;
+        }
+			
+	return (pointer);
+}
+//MY VERS
+// void *monitor(void *arg)
 // {
-//     pthread_mutex_lock(&set->meal_lock);
+//     t_program *program = (t_program *)arg;
+//     size_t current_time;
+//     int i;
+
+//     while (1)
 //     {
-//         if (set->finished_philo_counter)
-//         pthread_mutex_unlock(&set->meal_lock);
-        
-//         // pthread_mutex_lock(&set->write_lock);
-//         // printf("All filos finished eating\n");
-//         // pthread_mutex_unlock(&set->write_lock);
-
-//         pthread_mutex_lock(&set->dead_lock);
-//         set->dead_flag = 1;
-//         pthread_mutex_unlock(&set->dead_lock);
-//         return 1;
-//     }
-//     pthread_mutex_unlock(&set->meal_lock);
-//     return 0;
-// }
-
-// static int check_is_eating(t_philo *philo)
-// {
-//     pthread_mutex_lock(&philo->program->meal_lock);
-//     if (philo->eating == 1)
-//     {
-//         pthread_mutex_unlock(&philo->program->meal_lock);
-//         return 1;
-//     }
-//     pthread_mutex_unlock(&philo->program->meal_lock);
-//     return 0;
-// }
-
-// for (i = 0; i < program->philos->num_of_philos; i++)
+//         pthread_mutex_lock(&program->meal_lock); // Lock meal_lock to safely read shared data
+//         i = 0;
+//         while (i < program->philos->num_of_philos)
 //         {
 //             current_time = get_current_time();
 //             // Check if the philosopher has died
-//             if (program->philos[i].eating == 0 && (current_time - program->philos[i].last_meal > program->philos[i].time_to_die))
+//             if (current_time - program->philos[i].last_meal > program->philos[i].time_to_die)
 //             {
 //                 pthread_mutex_unlock(&program->meal_lock); // Unlock before setting the dead flag and printing
 //                 pthread_mutex_lock(&program->dead_lock);
@@ -114,46 +102,22 @@ void check_still_alive(t_philo *philo)
 //                 return NULL;
 //             }
 
-void *monitor(void *arg)
-{
-    t_program *program = (t_program *)arg;
-    size_t current_time;
-    int i;
+//             // Check if all philosophers have finished eating
+//             if (program->philos[i].num_meals != -1 && program->finished_philo_counter == program->philos->num_of_philos)
+//             {
+//                 pthread_mutex_unlock(&program->meal_lock); // Unlock before setting the dead flag
+//                 pthread_mutex_lock(&program->dead_lock);
+//                 program->dead_flag = 1;
+//                 pthread_mutex_unlock(&program->dead_lock);
+//                 return NULL;
+//             }
 
-    while (1)
-    {
-        pthread_mutex_lock(&program->meal_lock); // Lock meal_lock to safely read shared data
-        i = 0;
-        while (i < program->philos->num_of_philos)
-        {
-            current_time = get_current_time();
-            // Check if the philosopher has died
-            if (current_time - program->philos[i].last_meal > program->philos[i].time_to_die)
-            {
-                pthread_mutex_unlock(&program->meal_lock); // Unlock before setting the dead flag and printing
-                pthread_mutex_lock(&program->dead_lock);
-                *program->philos[i].ptr_dead_flag = 1;
-                pthread_mutex_unlock(&program->dead_lock);
-                print_death(&program->philos[i]);
-                return NULL;
-            }
-
-            // Check if all philosophers have finished eating
-            if (program->philos[i].num_meals != -1 && program->finished_philo_counter == program->philos->num_of_philos)
-            {
-                pthread_mutex_unlock(&program->meal_lock); // Unlock before setting the dead flag
-                pthread_mutex_lock(&program->dead_lock);
-                program->dead_flag = 1;
-                pthread_mutex_unlock(&program->dead_lock);
-                return NULL;
-            }
-
-            i++; // Increment the index
-        }
-        pthread_mutex_unlock(&program->meal_lock); // Unlock after iterating through all philosophers
+//             i++; // Increment the index
+//         }
+//         pthread_mutex_unlock(&program->meal_lock); // Unlock after iterating through all philosophers
         
-        //usleep(250); // Sleep for a short period to reduce CPU usage
-    }
-    return NULL;
-}
+//         //usleep(250); // Sleep for a short period to reduce CPU usage
+//     }
+//     return NULL;
+// }
 
