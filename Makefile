@@ -8,7 +8,7 @@ NAME = philo
 
 all: $(NAME)
 
-$(NAME): $(OBJ)
+$(NAME): $(OBJ) Makefile
 	$(CC) $(CFLAGS) $(OBJ) -o $(NAME)
 
 $(OBJ_DIR)/%.o: %.c Makefile philo.h
