@@ -17,6 +17,9 @@ side. If there is only one philosopher, there should be only one fork on the tab
 • To prevent philosophers from duplicating forks, you should protect the forks state
 with a mutex for each of them.*/
 
+
+//TEST 5 800 200 200 7 fails!
+
 #include "philo.h"
 
 // argv[1] num of philosophers == num of forks is from 1 to num

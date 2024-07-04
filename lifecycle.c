@@ -106,6 +106,7 @@ static void eat(t_philo *philo)
     else
         pthread_mutex_unlock(&philo->program->meal_lock);
     pthread_mutex_lock(&philo->program->meal_lock);
+
     if (philo->program->finished_philo_counter == philo->num_of_philos)
     {
         pthread_mutex_unlock(&philo->program->meal_lock);
