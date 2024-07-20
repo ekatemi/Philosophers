@@ -69,8 +69,8 @@ static void eat(t_philo *philo)
    //set death flag and prints a death message
     check_still_alive(philo);
 
-    if (philo->philo_id % 2 == 0)
-	    usleep(1000);
+    // if (philo->philo_id % 2 == 0)
+	//     usleep(1000);
     
     // Lock the right fork
     // pthread_mutex_lock(philo->r_fork);//
@@ -83,6 +83,7 @@ static void eat(t_philo *philo)
     // safe_print(philo, " is eating");
     // Determine the lock order to avoid deadlock
     if (philo->philo_id % 2 == 0) {
+        usleep(1000);
         pthread_mutex_lock(philo->r_fork);
         safe_print(philo, " has taken right fork");
         pthread_mutex_lock(philo->l_fork);
