@@ -73,14 +73,27 @@ static void eat(t_philo *philo)
 	    usleep(1000);
     
     // Lock the right fork
-    pthread_mutex_lock(philo->r_fork);//
-    safe_print(philo, " has taken right fork");
-    //Lock the left fork
-    pthread_mutex_lock(philo->l_fork);//
-    safe_print(philo, " has taken left fork");
+    // pthread_mutex_lock(philo->r_fork);//
+    // safe_print(philo, " has taken right fork");
+    // //Lock the left fork
+    // pthread_mutex_lock(philo->l_fork);//
+    // safe_print(philo, " has taken left fork");
     
-    philo->last_meal = get_current_time();
-    safe_print(philo, " is eating");
+    // philo->last_meal = get_current_time();
+    // safe_print(philo, " is eating");
+    // Determine the lock order to avoid deadlock
+    if (philo->philo_id % 2 == 0) {
+        pthread_mutex_lock(philo->r_fork);
+        safe_print(philo, " has taken right fork");
+        pthread_mutex_lock(philo->l_fork);
+        safe_print(philo, " has taken left fork");
+    } else {
+        pthread_mutex_lock(philo->l_fork);
+        safe_print(philo, " has taken left fork");
+        pthread_mutex_lock(philo->r_fork);
+        safe_print(philo, " has taken right fork");
+    }
+
 
     philo->eating = 1;
     philo->meals_counter++;
@@ -88,8 +101,8 @@ static void eat(t_philo *philo)
     printf("philo id %d, death_flag %d, meals counter %d\n", philo->philo_id, *philo->ptr_dead_flag, philo->meals_counter);
     
     //put the forks down
-    pthread_mutex_unlock(philo->l_fork);
     pthread_mutex_unlock(philo->r_fork);
+    pthread_mutex_unlock(philo->l_fork);
     
 
     pthread_mutex_lock(&philo->program->meal_lock);
