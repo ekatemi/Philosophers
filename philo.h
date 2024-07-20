@@ -70,6 +70,8 @@ void cleanup_all(t_program *set);
 //ROUTINE
 void *routine(void *data);
 void *monitor(void *arg);
+void check_still_alive(t_philo *philo);
+void ft_check_deadflag(t_philo *philo, int *flag);
 
 //UTILS
 size_t	get_current_time(void);
