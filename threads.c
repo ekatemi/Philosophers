@@ -26,7 +26,7 @@ void *monitor(void *arg)
         }
         else
             pthread_mutex_unlock(&set->dead_lock);
-        usleep(500);
+        usleep(100);
     }
     return (arg);
 }
