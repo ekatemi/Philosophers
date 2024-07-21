@@ -69,12 +69,17 @@ static void ft_sleep(t_philo *philo)
 static void eat(t_philo *philo)
 {
     // Lock the right fork
-    pthread_mutex_lock(philo->r_fork);
-    safe_print(philo, " has taken right fork");
-
-    // Lock the left fork
-    pthread_mutex_lock(philo->l_fork);
-    safe_print(philo, " has taken left fork");
+if (philo->philo_id % 2 == 0) {
+        pthread_mutex_lock(philo->r_fork);
+        safe_print(philo, " has taken right fork");
+        pthread_mutex_lock(philo->l_fork);
+        safe_print(philo, " has taken left fork");
+    } else {
+        pthread_mutex_lock(philo->l_fork);
+        safe_print(philo, " has taken left fork");
+        pthread_mutex_lock(philo->r_fork);
+        safe_print(philo, " has taken right fork");
+    }
 
     // Indicate that the philosopher is eating
     safe_print(philo, " is eating");
@@ -107,9 +112,9 @@ static void eat(t_philo *philo)
     pthread_mutex_unlock(&philo->program->write_lock);
     
     // Release the left fork
-    pthread_mutex_unlock(philo->l_fork);
-    // Release the right fork
     pthread_mutex_unlock(philo->r_fork);
+    // Release the right fork
+    pthread_mutex_unlock(philo->l_fork);
 }
 
 
