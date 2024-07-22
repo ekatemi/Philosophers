@@ -6,30 +6,21 @@
 // ◦ timestamp_in_ms X is thinking
 // ◦ timestamp_in_ms X died
 
-// static size_t get_last_meal_time(t_philo *philo)
-// {
-//     size_t last_meal_time = 0;
-//     pthread_mutex_lock(&philo->program->meal_lock);
-//     last_meal_time = philo->last_meal;
-//     pthread_mutex_unlock(&philo->program->meal_lock);
-//     return last_meal_time;
-// }
 
 //check if this particular philo is dead
 static int is_dead(t_philo *philo)
 {
     //size_t time = get_current_time();
     pthread_mutex_lock(&philo->program->meal_lock);
-    if(philo->eating == 0 && (philo->last_meal + philo->time_to_die) <= get_current_time())
+    if(philo->eating == 0 && (get_current_time() - philo->last_meal > philo->time_to_die))
     {
         pthread_mutex_unlock(&philo->program->meal_lock);
         print_death(philo);
         return 1;
     }
     pthread_mutex_unlock(&philo->program->meal_lock);
-    return 0;
+    return (0);
 }
-
 
 static int check_all_philos(t_program *program)
 {
@@ -40,9 +31,8 @@ static int check_all_philos(t_program *program)
         ft_usleep(program->philos[0].time_to_die);
         print_death(&program->philos[i]);
        
-        return 1;
-    }
-    
+        return (1);
+    }   
     while (i < program->philos[1].num_of_philos)
     {
         if (is_dead(&program->philos[i]))
@@ -50,21 +40,22 @@ static int check_all_philos(t_program *program)
             pthread_mutex_lock(&program->dead_lock);
             program->dead_flag = 1;
             pthread_mutex_unlock(&program->dead_lock);
-            return 1;
-        }
-            
+            return (1);
+        }      
         i++;
     }
-    return 0;
+    return (0);
 }
 
 static int finish_meal_counter(t_program *program)
 {
-    int counter = 0;
+    int counter;
+    
+    counter = 0;
     pthread_mutex_lock(&program->meal_lock);
     counter = program->finished_philo_counter;
     pthread_mutex_unlock(&program->meal_lock);
-    return counter;
+    return (counter);
 }
 
 static int all_ate(t_program *program)
@@ -74,11 +65,11 @@ static int all_ate(t_program *program)
     {
         if (program->philos[i].num_meals != -1 && finish_meal_counter(program) == program->philos[1].num_of_philos)
         {
-            return 1;
+            return (1);
         }
         i++;
     }
-    return 0;
+    return (0);
     
 }
 
@@ -101,7 +92,7 @@ void *monitor(void *arg)
         
         usleep(250); // Sleep for a short period to reduce CPU usage
     }
-    return NULL;
+    return (NULL);
 }
 
 //dies when ./philo 5 410 200 200 

@@ -54,26 +54,27 @@ typedef struct s_program
 
 
 //helper functions check input
-void ft_putstr_fd(char *str, int fd);
-int input_ok(int argc, char **argv);
+void	ft_putstr_fd(char *str, int fd);
+int		input_ok(int argc, char **argv);
 void	init_input(t_philo *philo, char **argv);
 
 //INIT
 void	init_input(t_philo *data, char **argv);
 void	set_philosophers(t_philo *data, t_program *set);
-void	create_and_join_threads(t_philo *data, t_program *set);
-void init_mutexes(t_program *set, t_philo *data);
-void cleanup_all(t_program *set);
+int	create_and_join_threads(t_philo *data, t_program *set);
+int		init_mutexes(t_program *set, t_philo *data);
+void	cleanup_all(t_program *set);
 
 //ROUTINE
-void *routine(void *data);
-void *monitor(void *arg);
+void	*routine(void *data);
+void	*monitor(void *arg);
 
 //UTILS
-size_t	get_current_time(void);
-unsigned int ft_atoi(char *str);
-void print_death(t_philo *philo);
-int check_dead_flag(t_philo *philo);
-void safe_print(t_philo *philo, char *str);
-int	ft_usleep(size_t milliseconds);
-#endif
+size_t			get_current_time(void);
+unsigned int	ft_atoi(char *str);
+void			print_death(t_philo *philo);
+int				check_dead_flag(t_philo *philo);
+void			safe_print(t_philo *philo, char *str);
+int				ft_usleep(size_t milliseconds);
+
+# endif
