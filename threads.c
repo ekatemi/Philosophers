@@ -20,7 +20,7 @@ static int is_dead(t_philo *philo)
 {
     //size_t time = get_current_time();
     pthread_mutex_lock(&philo->program->meal_lock);
-    if(philo->eating == 0 && (philo->last_meal + philo->time_to_die) < get_current_time())
+    if(philo->eating == 0 && (philo->last_meal + philo->time_to_die) <= get_current_time())
     {
         pthread_mutex_unlock(&philo->program->meal_lock);
         print_death(philo);
@@ -47,9 +47,9 @@ static int check_all_philos(t_program *program)
     {
         if (is_dead(&program->philos[i]))
         {
-            // pthread_mutex_lock(&program->dead_lock);
-            // program->dead_flag = 1;
-            // pthread_mutex_unlock(&program->dead_lock);
+            pthread_mutex_lock(&program->dead_lock);
+            program->dead_flag = 1;
+            pthread_mutex_unlock(&program->dead_lock);
             return 1;
         }
             
@@ -99,7 +99,7 @@ void *monitor(void *arg)
             return arg;
         }
         
-        //usleep(250); // Sleep for a short period to reduce CPU usage
+        usleep(250); // Sleep for a short period to reduce CPU usage
     }
     return NULL;
 }
