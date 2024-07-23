@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   philo.h                                            :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: emikhayl <marvin@42.fr>                    +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2024/07/23 20:06:03 by emikhayl          #+#    #+#             */
+/*   Updated: 2024/07/23 20:08:02 by emikhayl         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #ifndef PHILO_H
 # define PHILO_H
 
@@ -8,22 +20,13 @@
 #include <stdlib.h>
 #include <sys/time.h>
 
-#ifndef NUM_MEALS
-# define NUM_MEALS 100
-#endif
 
 # define PHILO_MAX 200
-
-//STRUCT
-// argv[2] time to die  (in milliseconds) milliseconds since the beginning of their last meal or the beginning of the simulation calculate this 
-//beginning+time to die  or last_meal_end+time_to_die
-// argv[3] time to eat  (in milliseconds)
-// argv[4] time to sleep  (in milliseconds)
 
 //this stricture contains info about each philisopher
 typedef struct s_philo
 {
-    pthread_t		thread;
+	pthread_t		thread;
 	int				philo_id;
 	int				eating; //1 0
 	int				flag_all_ate; //1 0 if meals counter == num_meals

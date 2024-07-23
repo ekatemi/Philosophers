@@ -1,4 +1,4 @@
-CC = gcc -pthread #-fsanitize=thread -g
+CC = gcc #-fsanitize=thread
 CFLAGS = -Wall -Wextra -Werror
 
 SRC = main.c check.c threads.c utils.c init.c lifecycle.c

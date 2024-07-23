@@ -69,33 +69,22 @@ static void ft_sleep(t_philo *philo)
 //print only if dead flag is 0
 static void eat(t_philo *philo)
 {
-    // if (philo->philo_id % 2 == 0)
-    // {
     pthread_mutex_lock(philo->r_fork);
     safe_print(philo, "has taken right fork");
     pthread_mutex_lock(philo->l_fork);
     safe_print(philo, "has taken left fork");
-    // }
-    // else
-    // {
-    //     pthread_mutex_lock(philo->l_fork);
-    //     safe_print(philo, "has taken left fork");
-    //     pthread_mutex_lock(philo->r_fork);
-    //     safe_print(philo, "has taken right fork");
-    // }
-    pthread_mutex_lock(&philo->program->meal_lock);
-    philo->eating = 1;
-    pthread_mutex_unlock(&philo->program->meal_lock);
     pthread_mutex_lock(&philo->program->meal_lock);
     philo->last_meal = get_current_time();
+    philo->eating = 1;
     pthread_mutex_unlock(&philo->program->meal_lock);
+
     safe_print(philo, "is eating");
+ 
     philo->meals_counter++;
     if (philo->num_meals != -1 && philo->meals_counter == philo->num_meals)
     {
         pthread_mutex_lock(&philo->program->meal_lock);
         philo->program->finished_philo_counter++;
-        //printf("philos finished all meals------------------- %d\n", philo->program->finished_philo_counter);
         pthread_mutex_unlock(&philo->program->meal_lock);
     }
     // Sleep for the eating duration
@@ -111,7 +100,7 @@ void *routine(void *arg)
     t_philo *philo = (t_philo *)arg;
     //all start in different time
     if (philo->philo_id % 2 == 0)
-        ft_usleep(1);
+        ft_usleep(100);
     //case only one thread
     if (philo->num_of_philos == 1)
     {

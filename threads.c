@@ -89,8 +89,6 @@ void *monitor(void *arg)
             pthread_mutex_unlock(&program->dead_lock);
             return arg;
         }
-        
-        usleep(250); // Sleep for a short period to reduce CPU usage
     }
     return (NULL);
 }
