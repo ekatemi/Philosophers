@@ -59,16 +59,10 @@ int	init_mutexes(t_program *set, t_philo *data)
 	i = 0;
 	set->philos = malloc(data->num_of_philos * sizeof(t_philo));
 	if (!set->philos)
-	{
-		ft_putstr_fd("Malloc philos err", 2);
 		return (0);
-	}
 	set->forks = malloc(data->num_of_philos * sizeof(pthread_mutex_t));
 	if (!set->forks)
-	{
-		ft_putstr_fd("Malloc forks err", 2);
 		return (0);
-	}
 	pthread_mutex_init(&set->write_lock, NULL);
 	pthread_mutex_init(&set->meal_lock, NULL);
 	pthread_mutex_init(&set->dead_lock, NULL);
@@ -98,47 +92,4 @@ void	cleanup_all(t_program *set)
 	pthread_mutex_destroy(&set->write_lock);
 	free(set->forks);
 	free(set->philos);
-}
-
-int	create_and_join_threads(t_philo *data, t_program *set)
-{
-	int			i;
-	pthread_t	monitor_thread;
-
-	i = 0;
-	if (pthread_create(&monitor_thread, NULL, monitor, set))
-	{
-		ft_putstr_fd("Error monitor thread create", 2);
-		cleanup_all(set);
-		return (0);
-	}
-	while (i < data->num_of_philos)
-	{
-		if (pthread_create(&set->philos[i].thread,
-				NULL, routine, &set->philos[i]))
-		{
-			ft_putstr_fd("Error thread create", 2);
-			cleanup_all(set);
-			return (0);
-		}
-		i++;
-	}
-	i = 0;
-	while (i < data->num_of_philos)
-	{
-		if (pthread_join(set->philos[i].thread, NULL))
-		{
-			ft_putstr_fd("Error thread join", 2);
-			cleanup_all(set);
-			return (0);
-		}
-		i++;
-	}
-	if (pthread_join(monitor_thread, NULL))
-	{
-		ft_putstr_fd("Error monitor thread join", 2);
-		cleanup_all(set);
-		return (0);
-	}
-	return (1);
 }

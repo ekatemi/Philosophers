@@ -1,7 +1,7 @@
 CC = gcc #-fsanitize=thread
 CFLAGS = -Wall -Wextra -Werror
 
-SRC = main.c check.c threads.c utils.c init.c lifecycle.c
+SRC = main.c check.c threads.c utils.c init.c lifecycle.c init_threads.c
 OBJ_DIR = OBJ
 OBJ = $(addprefix $(OBJ_DIR)/, $(SRC:.c=.o))
 NAME = philo
@@ -16,11 +16,11 @@ $(OBJ_DIR)/%.o: %.c Makefile philo.h
 	$(CC) $(CFLAGS) -c $< -o $@
 
 clean : 
-	rm -r $(OBJ_DIR)
+	rm -rf $(OBJ_DIR)
 
 fclean :
 	rm -f $(NAME)
-	rm -r $(OBJ_DIR)
+	rm -rf $(OBJ_DIR)
 
 re : fclean all
 
