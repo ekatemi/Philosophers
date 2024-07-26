@@ -27,7 +27,7 @@ void	safe_print(t_philo *philo, char *str)
 	{
 		pthread_mutex_unlock(&philo->program->dead_lock);
 		pthread_mutex_lock(&philo->program->write_lock);
-		printf("%zu %d %s\n", get_current_time() - philo->start_time,
+		printf("%zu %d %s\n", get_current_time() - philo->program->start_time,
 			philo->philo_id, str);
 		pthread_mutex_unlock(&philo->program->write_lock);
 	}
@@ -35,34 +35,41 @@ void	safe_print(t_philo *philo, char *str)
 		pthread_mutex_unlock(&philo->program->dead_lock);
 }
 
-// //only prints death, so dead flag should be set to 1 before or after
-// void	print_death(t_philo *philo, char *str)
-// {
-// 	pthread_mutex_lock(&philo->program->write_lock);
-// 	printf("%zu %d %s\n", get_current_time()
-// 		- philo->start_time, philo->philo_id, str);
-// 	pthread_mutex_unlock(&philo->program->write_lock);
-// }
-
 int	main(int argc, char **argv)
 {
-	t_philo		data;
+	//t_philo		data;
 	t_program	set;
+	pthread_t	monitor_thread;
 
 	if (!input_ok(argc, argv))
 		return (EXIT_FAILURE);
-	init_input(&data, argv);
-	if (!init_mutexes(&set, &data))
+	init_input(&set, argv);
+	if (!set_philosophers(&set))
+		return (EXIT_FAILURE);
+	if (!init_mutexes(&set))
 	{
 		printf("Error init mutexes\n");
 		return (EXIT_FAILURE);
 	}
-	set_philosophers(&data, &set);
-	if (!create_and_join_threads(&data, &set))
+	if (pthread_create(&monitor_thread, NULL, monitor, &set))
 	{
-		printf("Error create and join threads\n");
+		ft_putstr_fd("Error monitor thread create", 2);
+		cleanup_all(&set);
+		return (EXIT_FAILURE);
+	}
+	// Detach the monitor thread
+    if (pthread_detach(monitor_thread))
+    {
+        ft_putstr_fd("Error monitor thread detach", 2);
+        cleanup_all(&set);
+        return (EXIT_FAILURE);
+    }
+	if (!create_and_join_threads(&set))
+	{
+		ft_putstr_fd("Error philo thread create", 2);
+		cleanup_all(&set);
 		return (EXIT_FAILURE);
 	}
 	cleanup_all(&set);
-	return (0);
+	return (EXIT_SUCCESS);
 }

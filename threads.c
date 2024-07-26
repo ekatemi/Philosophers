@@ -17,7 +17,7 @@ static	int	is_dead(t_philo *philo)
 {
 	pthread_mutex_lock(&philo->program->meal_lock);
 	if (philo->eating == 0 && (get_current_time() - philo->last_meal
-			> philo->time_to_die))
+			> philo->program->time_to_die))
 	{
 		pthread_mutex_unlock(&philo->program->meal_lock);
 		safe_print(philo, RED"is dead"RESET);
@@ -32,13 +32,13 @@ static	int	check_all_philos(t_program *program)
 	int	i;
 
 	i = 0;
-	if (program->philos[0].num_of_philos == 1)
+	if (program->num_of_philos == 1)
 	{
-		ft_usleep(program->philos[0].time_to_die);
+		ft_usleep(program->time_to_die);
 		safe_print(&program->philos[i], RED"is dead"RESET);
 		return (1);
 	}
-	while (i < program->philos[1].num_of_philos)
+	while (i < program->num_of_philos)
 	{
 		if (is_dead(&program->philos[i]))
 		{
@@ -68,10 +68,10 @@ static	int	all_ate(t_program *program)
 	int	i;
 
 	i = 0;
-	while (i < program->philos[1].num_of_philos)
+	while (i < program->num_of_philos)
 	{
-		if (program->philos[i].num_meals != -1 && finish_meal_counter(program)
-			== program->philos[1].num_of_philos)
+		if (program->num_meals != -1 && finish_meal_counter(program)
+			== program->num_of_philos)
 		{
 			return (1);
 		}

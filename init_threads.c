@@ -12,31 +12,34 @@
 
 #include "philo.h"
 
-int	create_threads(t_philo *data, t_program *set)
+int	create_threads(t_program *set)
 {
 	int	i;
 
 	i = 0;
-	while (i < data->num_of_philos)
+	while (i < set->num_of_philos)
 	{
-		if (pthread_create(&set->philos[i].thread,
-				NULL, routine, &set->philos[i]))
-		{
-			ft_putstr_fd("Error thread create", 2);
-			cleanup_all(set);
-			return (0);
-		}
+		if (pthread_create(&set->philos[i].thread, NULL, routine, &set->philos[i]))
+        {
+            ft_putstr_fd("Error thread create", 2);
+            printf("Created %d threads from %d\n", i, set->num_of_philos);
+            pthread_mutex_lock(&set->dead_lock);
+            set->dead_flag = 1; // Set the dead flag
+            pthread_mutex_unlock(&set->dead_lock);
+            set->num_of_philos = i; // Update the number of created threads
+            return (0);
+        }
 		i++;
 	}
 	return (1);
 }
 
-int	join_threads(t_philo *data, t_program *set)
+int	join_threads(t_program *set)
 {
 	int	i;
 
 	i = 0;
-	while (i < data->num_of_philos)
+	while (i < set->num_of_philos)
 	{
 		if (pthread_join(set->philos[i].thread, NULL))
 		{
@@ -49,25 +52,11 @@ int	join_threads(t_philo *data, t_program *set)
 	return (1);
 }
 
-int	create_and_join_threads(t_philo *data, t_program *set)
+int	create_and_join_threads(t_program *set)
 {
-	pthread_t	monitor_thread;
-
-	if (pthread_create(&monitor_thread, NULL, monitor, set))
-	{
-		ft_putstr_fd("Error monitor thread create", 2);
-		cleanup_all(set);
+	if (!create_threads(set))
 		return (0);
-	}
-	if (!create_threads(data, set))
+	if (!join_threads(set))
 		return (0);
-	if (!join_threads(data, set))
-		return (0);
-	if (pthread_join(monitor_thread, NULL))
-	{
-		ft_putstr_fd("Error monitor thread join", 2);
-		cleanup_all(set);
-		return (0);
-	}
 	return (1);
 }

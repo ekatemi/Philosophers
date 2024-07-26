@@ -30,15 +30,15 @@ typedef struct s_philo
 	pthread_t			thread;
 	int					philo_id;
 	int					eating; //1 0
-	int					flag_all_ate; //1 0 if meals counter == num_meals
+	//int					flag_all_ate; //1 0 if meals counter == num_meals
 	int					meals_counter; //++
 	size_t				last_meal; //start eating + time to eat//shared
-	size_t				time_to_die;
-	size_t				time_to_eat;
-	size_t				time_to_sleep;
-	size_t				start_time;
-	int					num_of_philos;
-	int					num_meals;
+	// size_t				time_to_die;
+	// size_t				time_to_eat;
+	// size_t				time_to_sleep;
+	//size_t				start_time;
+	//int					num_of_philos;
+	//int					num_meals;
 	int					*ptr_dead_flag;
 	pthread_mutex_t		*r_fork;
 	pthread_mutex_t		*l_fork;
@@ -47,8 +47,15 @@ typedef struct s_philo
 
 typedef struct s_program
 {
-	int				dead_flag; //shared
-	int				finished_philo_counter; //shared
+	int				dead_flag; //init input
+	int				num_of_philos; //init input not change
+	int				finished_philo_counter; //nit input shared
+	int				num_meals; //init input not change
+	//int				flag_all_ate; //init input shared??
+	size_t				start_time; //init input not change
+	size_t				time_to_die; //init input not change
+	size_t				time_to_eat; //init input not change
+	size_t				time_to_sleep; //init input not change
 	pthread_mutex_t	dead_lock; //shared
 	pthread_mutex_t	meal_lock; //shared
 	pthread_mutex_t	write_lock; //shared
@@ -59,13 +66,12 @@ typedef struct s_program
 //helper functions check input
 void			ft_putstr_fd(char *str, int fd);
 int				input_ok(int argc, char **argv);
-void			init_input(t_philo *philo, char **argv);
 
 //INIT
-void			init_input(t_philo *data, char **argv);
-void			set_philosophers(t_philo *data, t_program *set);
-int				create_and_join_threads(t_philo *data, t_program *set);
-int				init_mutexes(t_program *set, t_philo *data);
+void			init_input(t_program *data, char **argv);
+int			set_philosophers(t_program *set);
+int				create_and_join_threads(t_program *set);
+int				init_mutexes(t_program *set);
 void			cleanup_all(t_program *set);
 
 //ROUTINE

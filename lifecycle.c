@@ -38,7 +38,7 @@ static void	ft_sleep(t_philo *philo)
 	philo->eating = 0;
 	pthread_mutex_unlock(&philo->program->meal_lock);
 	safe_print(philo, "is sleeping");
-	ft_usleep(philo->time_to_sleep);
+	ft_usleep(philo->program->time_to_sleep);
 }
 
 //print only if dead flag is 0
@@ -54,13 +54,13 @@ static void	eat(t_philo *philo)
 	pthread_mutex_unlock(&philo->program->meal_lock);
 	safe_print(philo, GREEN"is eating"RESET);
 	philo->meals_counter++;
-	if (philo->num_meals != -1 && philo->meals_counter == philo->num_meals)
+	if (philo->program->num_meals != -1 && philo->meals_counter == philo->program->num_meals)
 	{
 		pthread_mutex_lock(&philo->program->meal_lock);
 		philo->program->finished_philo_counter++;
 		pthread_mutex_unlock(&philo->program->meal_lock);
 	}
-	ft_usleep(philo->time_to_eat);
+	ft_usleep(philo->program->time_to_eat);
 	pthread_mutex_unlock(philo->r_fork);
 	pthread_mutex_unlock(philo->l_fork);
 }
@@ -73,18 +73,16 @@ void	*routine(void *arg)
 	philo = (t_philo *)arg;
 	if (philo->philo_id % 2 == 0)
 		ft_usleep(100);
-	if (philo->num_of_philos == 1)
+	if (philo->program->num_of_philos == 1)
 	{
-		ft_usleep(philo->time_to_die);
+		ft_usleep(philo->program->time_to_die);
 		pthread_mutex_lock(&philo->program->dead_lock);
 		*philo->ptr_dead_flag = 1;
 		pthread_mutex_unlock(&philo->program->dead_lock);
 		return (arg);
 	}
-	while (1)
+	while (!check_dead_flag(philo))
 	{
-		if (check_dead_flag(philo))
-			break ;
 		eat(philo);
 		ft_sleep(philo);
 		safe_print(philo, "is thinking");
